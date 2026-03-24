@@ -1,17 +1,20 @@
 import gsap from 'gsap'
 import { useState } from 'react'
 import {ScrollTrigger, SplitText } from "gsap/all";
-
+import Navbar from "./components/Navbar.jsx";
+import Hero from "./components/Hero.jsx";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <h1 className="text-3xl text-indigo-300">Hello html</h1>
-    </>
+    <main className="">
+      <Navbar/>
+      <Hero/>
+    {/* temporary div for leaf animation testing with scroll*/}
+        <div className="h-dvh bg-black"></div>
+    </main>
   )
 }
 
