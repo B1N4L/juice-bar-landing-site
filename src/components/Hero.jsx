@@ -1,8 +1,14 @@
 import {useGSAP} from "@gsap/react";
 import gsap from "gsap";
 import {SplitText} from "gsap/all";
+import {useRef} from "react";
+import {useMediaQuery} from "react-responsive";
 
 const Hero = () => {
+
+    const videoRef = useRef(null);
+    //check device type by occupying screen width
+    const isMobile = useMediaQuery({maxWidth: 770});
 
     useGSAP(()=>{
         //to animate text pieces individually to both chars & words using classnames
@@ -31,21 +37,44 @@ const Hero = () => {
 
         gsap.timeline({
             scrollTrigger: {
-                trigger: '#hero', //watch the trigger on the hero section
-                start: 'top top', //start when top of homepage hit top of the screen
-                end: 'top bottom', //stop when bottom of the homepage hit the top of the screen
-                scrub: true, //animations will be directly related to the scroll
-            }
+                trigger: "#hero",
+                start: "top top",
+                end: "bottom top",
+                scrub: true,
+                // markers: true, // turn this on for debugging
+            },
         })
             .to('.right-leaf', {y: 200}, 0) //the animation will start at the beginning of the timeline (0 seconds)
             .to('.left-leaf', {y: -200}, 0) //the animation will start at the beginning of the timeline (0 seconds)
+
+        //these values change on mobile devices due to width
+        const startValue = isMobile ? 'top 50%' : 'center 60%'; //when top of the video element reaches 50% of the screen, the animation starts  for mobile
+        const endValue = isMobile ? '120% top' : 'bottom top'; //when top of the video element reaches 120% past the screen, the animation ends
+
+        let tlVideo = gsap.timeline({
+            scrollTrigger: {
+                trigger: "video",
+                start: startValue,
+                end: endValue,
+                scrub: true,
+                pin: true,
+            },
+        });
+
+        videoRef.current.onloadedmetadata = () => {
+            tlVideo.to(videoRef.current, {
+                //ties the current time with the duration.
+                currentTime: videoRef.current.duration,
+            });
+        };
+
     }, [])
 
 
 
     return (
-        // used id so you can scroll to it
-        <section id="hero" className="noisy">
+        <>
+        <section id="hero" className="">
             <h1 className="title">MOJITO</h1>
 
             <img src="/images/hero-left-leaf.png" alt="left-leaf" className="left-leaf" />
@@ -70,6 +99,14 @@ const Hero = () => {
                 </div>
             </div>
         </section>
+
+            <div className="video absolute inset-0">
+                <video
+                    ref={videoRef}
+                    src="/videos/hero-cocktail-video.mp4" muted playsInline preload="auto" //plays automatically when user opens the page
+                />
+            </div>
+        </>
     );
 }
 
