@@ -2,8 +2,31 @@ import {useGSAP} from "@gsap/react";
 import gsap from "gsap";
 import {SplitText} from "gsap/all";
 import {featureLists, goodLists} from "../../constants/index.js";
+import {useMediaQuery} from "react-responsive";
 
 const Art = () => {
+
+    // detect mobile viewport to adjust the scroll trigger start point for better user experience on smaller screens
+    const isMobile = useMediaQuery({maxWidth: 770});
+
+    useGSAP(()=>{
+        const start = isMobile ? 'top 20%' : 'top top';
+
+        const maskTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: '#art',
+                start,
+                end: 'bottom center',
+                scrub: 1.5,
+                pin: true, //keeps the section in place while the animation is active
+            }
+        })
+
+        maskTimeline.to('.will-fade', {opacity: 0, stagger: 0.2, ease: 'power1.inOut',})
+            .to('.masked-img', {scale: 1.3, ease: 'power1.inOut', maskPosition: 'center center', duration: 1, maskSize: '400%'})
+            .to('#masked-content', {opacity: 1, duration: 1, ease: 'power1.inOut'})
+    });
+
     return (
         <section id="art" >
             <div className="container mx-auto h-full pt-20">
